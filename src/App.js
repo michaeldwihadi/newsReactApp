@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react'
+
+import Container from './components/Container'
+import NewsList from './components/NewsList'
+import Navbar from './components/Navbar'
+import { getNews } from './services/getNews'
 
 function App() {
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+  useEffect(() => {
+    const fetchTechNews = async () => {
+      setLoading(true)
+      const res = await getNews()
+      console.log(res);
+      if(!res){
+        setLoading(false)
+        setError(false)
+        return
+      }
+      setLoading(false)
+      setArticles(res.articles)
+    }
+    fetchTechNews();
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar/>
+      <Container>
+        <NewsList articles={articles}/>
+      </Container>
+    </>
   );
 }
 
